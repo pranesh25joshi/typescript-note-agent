@@ -2,3 +2,4 @@
 */.env
 */.env.*
 */package-lock.json
+*/dist
