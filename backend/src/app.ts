@@ -1,10 +1,8 @@
 import express, { Request, Response } from "express";
-import {prisma} from "./lib/prisma.js"
-import { success } from "zod";
-import { RegisterInput } from "./validations/auth.schema.js";
-import { userRouter } from "./routes/auth.route.js";
+import {prisma} from "./lib/prisma.js";
+import { authRouter } from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
-import cors from "cors"
+import cors from "cors";
 
 
 export const app = express();
@@ -13,41 +11,40 @@ export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 app.use(cookieParser());
-app.use(cors(
-    {
-        origin:"http://localhost:5173"
-    }
-));
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true 
+}));
 
 
-app.use("api/v1/users", userRouter);
+app.use("/api/v1/auth", authRouter);
 
 
-
-app.get("/", (req,res) =>{
-    return res.json({
-        message:"this is  test home route"
-    })
+app.get("/", (req: Request, res: Response) => {
+    res.status(200).json({
+        message: "Test home route is working"
+    });
 });
 
-
-app.get("/test", async (req:Request, res:Response) => {
+app.get("/test", async (req: Request, res: Response, next: NextFunction) => {
     try {
         const notes = await prisma.note.findMany();
-        return res.status(200).json({
-            success : true,
-            data : notes
+        res.status(200).json({
+            success: true,
+            data: notes
         });
     } catch (error) {
-        console.log(`this is the error in test route ${ error}`)
+        console.error(`Error in test route:`, error);
+        next(error);
     }
 });
 
 
-app.post("/register", (req , res)=>{
-    try {
-        const {name, email, password} = req.body;
-    } catch (error) {
-        console.log("their is an error in register user route")
-    }
+// global error middleware
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error("Global Error Handler caught:", err);
+    res.status(500).json({
+        success: false,
+        message: "Internal Server Error"
+    });
 });

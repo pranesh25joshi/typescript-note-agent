@@ -9,7 +9,7 @@ export const registerUserSchema = z.object({
 
 
 export const loginUserSchema = z.object({
-    email : z.email(),
+    email : z.email().min(1, "email cannot be empty"),
     password: z.string().min(2, "password must have min 2 charcters")
 }).strict()
 
