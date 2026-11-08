@@ -3,7 +3,7 @@ import { z } from "zod";
 import {prisma} from  "../lib/prisma.js";
 
 import {
-  getUserInfo,
+  getUserInfoById,
   updateUserInfo,
 } from "../services/user.service.js";
 
@@ -15,7 +15,7 @@ export const getProfile = async (
   next: NextFunction
 ) => {
   try {
-    const user = await getUserInfo(req.user!.id);
+    const user = await getUserInfoById(req.user!.id);
 
     if (!user) {
       return res.status(404).json({

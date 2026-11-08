@@ -2,7 +2,7 @@ import z, { success } from "zod";
 
 import {registerUser, loginUser} from "../services/auth.service.js"
 import { NextFunction, Request, Response } from "express";
-import { getUserInfo } from "../services/user.service.js";
+import { getUserInfoByEmail } from "../services/user.service.js";
 import { hashedPassword } from "../utils/auth/hash.js";
 
 const cookieOptions = {
@@ -15,7 +15,7 @@ export const registerUserController = async (req:Request, res:Response, next: Ne
     try {
         const { name, email, password } = req.body;
 
-        const existingUser = await getUserInfo(email);
+        const existingUser = await getUserInfoByEmail(email);
         if (existingUser) {
             return res.status(409).json({
                 success: false,
@@ -55,7 +55,7 @@ export const loginUserController = async (req: Request, res: Response, next: Nex
         req.user = {
                 id: user.id,
             }
-            
+
         return res.status(200).json({
             success: true,
             message: "Logged in successfully",

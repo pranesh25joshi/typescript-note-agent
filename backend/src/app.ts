@@ -4,8 +4,7 @@ import { authRouter } from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { userRouter } from "./routes/user.route.js";
-
-
+import {agentRouter} from "./routes/agent.route.js"
 export const app = express();
 
 
@@ -20,6 +19,7 @@ app.use(cors({
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/agent", agentRouter);
 
 
 app.get("/", (req: Request, res: Response) => {

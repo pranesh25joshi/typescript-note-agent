@@ -1,33 +1,61 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
+import { generateAccessToken } from "../utils/auth/jwt.js"; 
 
+export const verifyJwt = async (req: Request, res: Response, next: NextFunction) => {
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-export const verifyJwt = async (req:Request, res:Response, next : NextFunction) =>{
-   try {
-    
-        const token = req.cookies.accessToken;
+    if (!accessToken && !refreshToken) {
+        return res.status(401).json({ 
+            success: false, 
+            message: "Unauthorized: No tokens provided" 
+        });
+    }
 
-        if(!token){
-            return res.status(401).json({
-                success:false,
-                message:"Unauthorized: No token provided"
-            })
+    try {
+        if (accessToken) {
+            const decoded = jwt.verify(
+                accessToken,
+                process.env.ACCESS_TOKEN_SECRET as string
+            ) as { id: string };
+
+            req.user = { id: decoded.id };
+            return next();
         }
-
-        const decoded_user_Id = jwt.verify(
-            token,
-            process.env.ACCESS_TOKEN_SECRET as string,
-        )as {id : string}
-
-        req.user = {id : decoded_user_Id.id};
-        next();
+    } catch (error) {
         
-   } catch (error) {
-    console.log(`their is an error in verfiyjwt middleware -> ${error}`);
-    return res.status(403).json({
-        success:false,
-        message : "error in verifying jwtmiddleware",
-        error : error
-    })
-   }
-}
+    }
+
+    if (!refreshToken) {
+        return res.status(401).json({ 
+            success: false, 
+            message: "Unauthorized: Session expired" 
+        });
+    }
+
+    try {
+        const decodedRefresh = jwt.verify(
+            refreshToken,
+            process.env.REFRESH_TOKEN_SECRET as string
+        ) as { id: string };
+
+        const newAccessToken = generateAccessToken(decodedRefresh.id);
+
+        res.cookie("accessToken", newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000
+        });
+
+        req.user = { id: decodedRefresh.id };
+        return next();
+
+    } catch (refreshError) {
+        return res.status(403).json({ 
+            success: false, 
+            message: "Forbidden: Session completely expired. Please log in again." 
+        });
+    }
+};
