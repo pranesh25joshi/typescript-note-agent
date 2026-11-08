@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { success } from "zod";
 
 import {registerUser, loginUser} from "../services/auth.service.js"
 import { NextFunction, Request, Response } from "express";
@@ -52,6 +52,10 @@ export const loginUserController = async (req: Request, res: Response, next: Nex
         res.cookie("accessToken", accessToken, { ...cookieOptions, maxAge: 15 * 60 * 1000 }); 
         res.cookie("refreshToken", refreshToken, { ...cookieOptions, maxAge: 7 * 24 * 60 * 60 * 1000 }); 
 
+        req.user = {
+                id: user.id,
+            }
+            
         return res.status(200).json({
             success: true,
             message: "Logged in successfully",
@@ -66,3 +70,24 @@ export const loginUserController = async (req: Request, res: Response, next: Nex
         next(error);
     }
 };
+
+
+export const logoutUserController = async (req:Request, res:Response, next : NextFunction) =>{
+    try {
+        res.clearCookie("accessToken");
+        res.clearCookie("refreshToken");
+
+        res.status(200).json({
+            success:true,
+            message : "loggout successful",
+        })
+
+    } catch (error) {
+        console.log(`error in logging out the user in logoutUserController -> ${error}`);
+        return res.status(500).json({
+            success:false,
+            message:"Internal server error, logout user error in logoutUserController",
+            error : error
+        })
+    }
+}

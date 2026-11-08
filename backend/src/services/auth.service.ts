@@ -1,12 +1,11 @@
 import { registerUserSchema, loginUserSchema } from "../validations/auth.schema.js";
 import { RegisterInput , LoginInput } from "../validations/auth.schema.js"
 
-import { PrismaClient } from "@prisma/client";
+import {prisma} from "../lib/prisma.js"
 import { hashedPassword, comparePassword } from "../utils/auth/hash.js";
 import { generateAccessToken, generateRefreshToken } from "../utils/auth/jwt.js";
 import { getUserInfo } from "./user.service.js";
 
-const prisma = new PrismaClient();
 
 export const registerUser = async (data : RegisterInput)=>{
     // business logic

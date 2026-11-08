@@ -7,7 +7,13 @@ export const getUserInfo = async (userId : string)=>{
     // business logic to interact with db
     const user = await prisma.user.findUnique({
         where:{
-            email:userId.toLocaleLowerCase().trim(),
+            id:userId,
+        },
+        select:{
+            id:true,
+            name:true,
+            email:true,
+            createdAt:true
         }
     })
     return user;

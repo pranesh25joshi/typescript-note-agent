@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
+import {prisma} from  "../lib/prisma.js";
 
 import {
   getUserInfo,
@@ -27,6 +28,7 @@ export const getProfile = async (
       user,
     });
   } catch (error) {
+    console.log(`error in getProfile controller -> ${error}`)
     next(error);
   }
 };
