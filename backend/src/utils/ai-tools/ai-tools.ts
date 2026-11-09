@@ -47,5 +47,24 @@ export const noteTools: ChatCompletionTool[] = [
         additionalProperties: false
       },
     }
+  },
+  {
+    type: "function",
+    function: {
+      name: "search_notes",
+      description: "Finds and retrieves notes based on a semantic search query or topic.",
+      parameters: {
+        type: "object",
+        properties: {
+          matchingNoteIds: { 
+            type: "array", 
+            items: { type: "string" },
+            description: "An array of the exact UUIDs of the notes that match the user's query." 
+          },
+        },
+        required: ["matchingNoteIds"],
+        additionalProperties: false
+      },
+    }
   }
 ];
