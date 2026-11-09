@@ -10,7 +10,12 @@ export const createNote = async (userId: string, content: string) => {
   });
 };
 
-export const updateNote = async (userId: string, noteId: string, content?: string, isCompleted?: boolean) => {
+export const updateNote = async (
+  userId: string,
+  noteId: string,
+  content?: string,
+  isCompleted?: boolean,
+) => {
   const existingNote = await prisma.note.findUnique({ where: { id: noteId } });
   if (!existingNote || existingNote.userId !== userId) {
     throw new Error("Note not found or unauthorized");
@@ -37,14 +42,13 @@ export const deleteNote = async (userId: string, noteId: string) => {
   });
 };
 
+export const getUserNotes = async (userId: string) => {
+  const notes = await prisma.note.findMany({
+    where: {
+      userId: userId,
+    },
+    select: { id: true, content: true, isCompleted: true },
+  });
 
-export const getUserNotes = async(userId :string) => {
-    const notes = await prisma.note.findMany({
-        where : {
-            userId : userId
-        },
-        select: { id: true, content: true, isCompleted: true }
-    })
-
-    return notes;
-}
+  return notes;
+};
