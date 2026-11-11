@@ -1,1 +1,3 @@
-DEPLOY.md
+.neon
+node_modules/
+.env.local
