@@ -42,6 +42,13 @@ export const deleteNote = async (userId: string, noteId: string) => {
   });
 };
 
+export const listUserNotes = async (userId: string) => {
+  return await prisma.note.findMany({
+    where: { userId },
+    orderBy: { updatedAt: "desc" },
+  });
+};
+
 export const getUserNotes = async (userId: string) => {
   const notes = await prisma.note.findMany({
     where: {

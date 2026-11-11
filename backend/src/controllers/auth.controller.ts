@@ -5,10 +5,14 @@ import { NextFunction, Request, Response } from "express";
 import { getUserInfoByEmail } from "../services/user.service.js";
 import { hashedPassword } from "../utils/auth/hash.js";
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// In production the frontend (Vercel) and API (Render) are different sites,
+// so cookies need SameSite=None + Secure to survive cross-site requests.
 const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict" as const,
+    secure: isProduction,
+    sameSite: (isProduction ? "none" : "strict") as "none" | "strict",
 };
 
 export const registerUserController = async (req:Request, res:Response, next: NextFunction)=>{

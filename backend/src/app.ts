@@ -1,25 +1,31 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response , NextFunction} from "express";
 import {prisma} from "./lib/prisma.js";
 import { authRouter } from "./routes/auth.route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { userRouter } from "./routes/user.route.js";
 import {agentRouter} from "./routes/agent.route.js"
+import {noteRouter} from "./routes/note.route.js"
 export const app = express();
 
 
 app.use(express.json());
 app.use(express.urlencoded({extended : true}));
 app.use(cookieParser());
+const corsOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:5173")
+    .split(",")
+    .map((origin) => origin.trim());
+
 app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true 
+    origin: corsOrigins,
+    credentials: true
 }));
 
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/agent", agentRouter);
+app.use("/api/v1/notes", noteRouter);
 
 
 app.get("/", (req: Request, res: Response) => {
