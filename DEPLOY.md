@@ -51,7 +51,8 @@ Two connection strings matter, both from `.env.local` / the Neon console:
 2. Settings:
    - **Root Directory:** `backend`
    - **Runtime:** Node
-   - **Build Command:** `npm install && npx prisma generate && npm run build`
+   - **Build Command:** `npm ci --include=dev && npx prisma generate && npm run build`
+     ⚠️ Two requirements here: `--include=dev` (Render's env has `NODE_ENV=production`, and npm skips devDependencies — all the `@types/*` packages — without it, failing with `TS7016` errors) and `npm ci` (installs the exact tree from the committed `package-lock.json`).
    - **Start Command:** `npx prisma migrate deploy && node dist/index.js`
    - **Instance Type:** Free
 3. **Environment variables** (Render → Environment):
@@ -107,6 +108,7 @@ Two connection strings matter, both from `.env.local` / the Neon console:
 - **Login succeeds but session doesn't persist** → `NODE_ENV` isn't `production` on Render (cookies need `Secure` + `SameSite=None` over HTTPS).
 - **Render build fails on `prisma generate`** → confirm the Build Command includes it; the generated client is not committed to git.
 - **Agent returns 500** → `OPENAI_API_KEY`, `BASE_URL`, `AI_MODEL`, or `SYSTEM_PROMPT` missing on Render.
+- **Render build fails with `TS7016: Could not find a declaration file`** → the build command is missing `--include=dev` (see step 3). With `NODE_ENV=production` set, npm omits devDependencies — exactly where the `@types/*` packages live.
 - **Migrations fail on Render with prepared-statement / lock errors** → `DIRECT_URL` isn't set (migrations must use Neon's direct, unpooled connection).
 
 ## Local development (unchanged)
