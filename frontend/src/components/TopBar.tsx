@@ -11,7 +11,7 @@ export default function TopBar() {
           <span className="brand-mark msz" aria-hidden="true">
             neurology
           </span>
-          <span className="brand-name">ThoughtFlow</span>
+          <span className="brand-name">Imprint</span>
           <span className="beta-chip">Beta</span>
         </div>
 

@@ -59,7 +59,7 @@ export default function LoginPage() {
             neurology
           </span>
           <div className="auth-brand-copy">
-            <h1 className="brand-name">ThoughtFlow</h1>
+            <h1 className="brand-name">Imprint</h1>
             <span className="beta-chip">Beta</span>
           </div>
         </div>

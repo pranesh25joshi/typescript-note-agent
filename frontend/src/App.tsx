@@ -4,7 +4,7 @@ import DashboardPage from "./pages/DashboardPage";
 
 function Splash() {
   return (
-    <div className="splash" role="status" aria-label="Loading ThoughtFlow">
+    <div className="splash" role="status" aria-label="Loading Imprint">
       <span className="brand-mark msz" aria-hidden="true">
         neurology
       </span>
